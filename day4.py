@@ -1,3 +1,4 @@
+from queue import Queue
 input = list()
 
 with open('day4.txt','r') as file:
@@ -7,11 +8,11 @@ with open('day4.txt','r') as file:
 def part1():
     total = 0
     for line in input:
-        cards = line.split(' | ')
-        winning = cards[0].split(':')
-        winning_number = set(winning[1].split())
-        numbers = set(cards[1].split())
-        matches = winning_number & numbers
+        card_id, numbers = line.split(':')
+        winner, my = numbers.split('|')
+        winner_set = set(winner.split())
+        my_set = set(my.split())
+        matches = winner_set & my_set
         if matches:
             # print(cards[0])
             # print(matches)
@@ -21,7 +22,28 @@ def part1():
 
 
 def part2():
-    pass
+    total = 0
+    d = {}
+    q = Queue()
+    for line in input:
+        card_id, numbers = line.split(':')
+        card_id = int(card_id[4:])
+        winner, my = numbers.split('|')
+        winner_set = set(winner.split())
+        my_set = set(my.split())
+        matches = winner_set & my_set
+        d[card_id] = len(matches)
+        q.put(card_id)
+
+    while not q.empty():
+        total += 1
+        k = q.get()
+        for i in range(k+1, k+d[k] + 1):
+            q.put(i)
+    return total
+
+
+
 
 print(f"Part 1: {str(part1())}")
 print(f"Part 2: {str(part2())}")
